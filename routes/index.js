@@ -10,5 +10,5 @@ module.exports = router;
 
 // Timer
 setInterval(function(){
-  console.log('Check podcasts');
+  console.log('Check podcasts!');
 }, 1000);    
