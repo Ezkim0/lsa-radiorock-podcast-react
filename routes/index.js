@@ -1,4 +1,6 @@
-var express = require('express');
+var express = require('express'),
+mongoose = require('mongoose');
+
 var router = express.Router();
 
 /* GET home page. */
@@ -11,4 +13,5 @@ module.exports = router;
 // Timer
 setInterval(function(){
   console.log('Check podcasts!');
-}, 1000);    
+}, 1000);
+
