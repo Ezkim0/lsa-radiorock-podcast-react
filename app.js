@@ -4,9 +4,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var fs = require('fs');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var rrpodcastsfetch = require('./modules/rrpodcastsfetch');
 
 var app = express();
 
@@ -22,8 +24,42 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+// Connect to mongodb
+var env = process.env.NODE_ENV || 'development';
+var config = require('./config/config')[env];
+
+// Bootstrap models
+var models_path = __dirname + '/models';
+fs.readdirSync(models_path).forEach(function (file) {
+  if (~file.indexOf('.js')) {
+    require(models_path + '/' + file);
+  }
+});
+
+// Connect to mongodb
+var connect = function () {
+  mongoose.connect(config.mongodb.uri, config.mongodb.options);
+};
+connect();
+
+mongoose.connection.on('open', function(){
+  console.log("MongoDB connection open");
+  rrpodcastsfetch.start();
+});
+
+// Error handler
+mongoose.connection.on('error', function (err) {
+  console.log(err);
+});
+
+// Reconnect when closed
+mongoose.connection.on('disconnected', function () {
+  connect();
+});
+
+
+
+app.use('/api', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -55,6 +91,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;
