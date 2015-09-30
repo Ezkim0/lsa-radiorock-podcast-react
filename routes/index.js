@@ -20,8 +20,12 @@ router.get('/podcasts/all', function(req, res, next) {
     console.log(results);
   });*/
 
+  //console.log(req.query);
+
   Rrpodcasts.list(req.query, function(err, items) {
-    if (err) { return res.send(500); }
+    if (err) { return res.sendStatus(500); }
+    
+    //console.log(items);
     res.json(items);
   });
   // get podcasts

@@ -21,9 +21,8 @@ function Rrpodcastsfetch() {
 
 Rrpodcastsfetch.prototype.start = function() {
   console.log("Start getting data!");
-  setInterval(getData(), 300000);
-  //setInterval(getData, 5000);
-  //getData();
+  setInterval(getData, 300000);
+  getData();
 };
 
 function getData() {
