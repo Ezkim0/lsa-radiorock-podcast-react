@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var test = require('mongoose-paginate');
 //var mongooseUtil = require('../utils/mongoose-util');
 //var async = require('async');
 
@@ -33,19 +34,40 @@ var rrpodcastsSchema = new Schema({
   }
 });
 
+rrpodcastsSchema.plugin(test);
+
+
 /**
  * Methods
  */
 
-rrpodcastsSchema.methods = {};
+rrpodcastsSchema.methods = {
+
+};
 
 /**
  * Statics
  */
 
 rrpodcastsSchema.statics = {
+  list: function (query, cb) {
+        
+    /*this.paginate({}, {
+      page: 1, limit: 10
+    }, cb);*/
 
+    console.log("sdfasdf");
 
+    console.log(this.paginate);
+
+    
+    /*this
+    .find({})
+    .sort({'created_at' : -1})
+    .exec(cb);*/
+
+  }
 };
+
 
 var Rrpodcasts = mongoose.model('Rrpodcasts', rrpodcastsSchema);

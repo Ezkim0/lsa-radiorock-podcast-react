@@ -6,10 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var fs = require('fs');
-
-var routes = require('./routes/index');
-var rrpodcastsfetch = require('./modules/rrpodcastsfetch');
-
 var app = express();
 
 // view engine setup
@@ -37,6 +33,7 @@ fs.readdirSync(models_path).forEach(function (file) {
 });
 
 // Connect to mongodb
+var rrpodcastsfetch = require('./modules/rrpodcastsfetch');
 var connect = function () {
   mongoose.connect(config.mongodb.uri, config.mongodb.options);
 };
@@ -59,6 +56,9 @@ mongoose.connection.on('disconnected', function () {
 
 
 
+
+
+var routes = require('./routes/index');
 app.use('/api', routes);
 
 // catch 404 and forward to error handler

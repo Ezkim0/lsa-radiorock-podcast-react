@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * Module dependencies.
  */
@@ -23,7 +21,7 @@ function Rrpodcastsfetch() {
 
 Rrpodcastsfetch.prototype.start = function() {
   console.log("Start getting data!");
-  setInterval(getData, 300000);
+  setInterval(getData(), 300000);
   //setInterval(getData, 5000);
   //getData();
 };
@@ -112,6 +110,8 @@ function checkPossibleNewPosts(data) {
         isNewPost = false;
       };
     };
+
+    //isNewPost = true;
     if(isNewPost){
       //Save item
       if(possibleNewPost.hasOwnProperty('files')){
