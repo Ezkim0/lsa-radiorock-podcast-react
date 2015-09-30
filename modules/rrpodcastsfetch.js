@@ -45,10 +45,12 @@ function getNewPosts() {
       });
 
       res.on('end', function () {
+          /*
           console.log("\n");
           console.log(" ##########################");
           console.log(" ## Remote data fetched! ##");
           console.log(" ##########################");
+          */
           data = JSON.parse(data);
           
           if(!data) {

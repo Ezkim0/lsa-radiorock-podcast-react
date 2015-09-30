@@ -3,10 +3,13 @@ var rootPath = path.normalize(__dirname + '/..');
 
 module.exports = {
 	development: {
+		mongodb: require('./mongodbDev'),
+		root: rootPath
+	},
+
+	release: {
 		mongodb: require('./mongodb'),
-		root: rootPath,
-		secret: '658383Y371P5e34',
-		uploadDir: path.join(rootPath, 'uploads')
+		root: rootPath
 	},
 
 	test: {},
