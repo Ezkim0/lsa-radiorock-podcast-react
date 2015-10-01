@@ -57,8 +57,10 @@ mongoose.connection.on('disconnected', function () {
 
 
 
-var routes = require('./routes/index');
-app.use('/api', routes);
+var index = require('./routes/index');
+var api = require('./routes/api');
+app.use('/api', api);
+app.use('/', index);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
