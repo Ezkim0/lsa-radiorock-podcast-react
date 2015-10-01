@@ -70,18 +70,14 @@ rrpodcastsSchema.statics = {
     var perPage = 2;
     var page = 1;
 
-    console.log(query.page);
+    console.log();
 
-    if (query) {
-      if (query.page) {
-        page = query.page;
-        getAll = true;
-      } else {
-        getAll = false;
-      }
+    if (query.hasOwnProperty("page")) {
+      page = parseInt(query.page);
       getAll = false;
+    } else {
+      getAll = true;
     }
-
 
     if (getAll) {
       this
@@ -91,7 +87,6 @@ rrpodcastsSchema.statics = {
         })
         .exec(cb);
     } else {
-      console.log("tänne");
       this.find({})
         .limit(perPage)
         .skip(perPage * page)
@@ -105,6 +100,6 @@ rrpodcastsSchema.statics = {
     .sort({'created_at' : -1})
     .exec(cb);*/
   }
-}
+};
 
 var Rrpodcasts = mongoose.model('Rrpodcasts', rrpodcastsSchema);

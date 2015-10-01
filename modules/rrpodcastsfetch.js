@@ -16,7 +16,7 @@ var posts = null;
 var localData = null;
 
 function Rrpodcastsfetch() {
-  
+
 }
 
 Rrpodcastsfetch.prototype.start = function() {
@@ -31,63 +31,65 @@ function getData() {
 }
 
 function getNewPosts() {
-  
+
   var options = {
-      host: 'www.radiorock.fi',
-      path: '/api/content?tagCategory=ohjelma&tagName=Korporaatio&page=0',
-      json: true
+    host: 'www.radiorock.fi',
+    path: '/api/content?tagCategory=ohjelma&tagName=Korporaatio&page=0',
+    json: true
   };
 
-  var request = http.request(options, function (res) {
-      var data = '';
-      res.on('data', function (chunk) {
-          data += chunk;
-      });
+  var request = http.request(options, function(res) {
+    var data = '';
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
 
-      res.on('end', function () {
-          /*
-          console.log("\n");
-          console.log(" ##########################");
-          console.log(" ## Remote data fetched! ##");
-          console.log(" ##########################");
-          */
-          data = JSON.parse(data);
-          
-          if(!data) {
-            return;
-          }
+    res.on('end', function() {
+      /*
+      console.log("\n");
+      console.log(" ##########################");
+      console.log(" ## Remote data fetched! ##");
+      console.log(" ##########################");
+      */
+      data = JSON.parse(data);
 
-          // Server posts
-          if(data.hasOwnProperty('posts')){
-            posts = data.posts;
-          } else {
-            console.log("Data has no posts!");
-          }
+      if (!data) {
+        return;
+      }
 
-          getLocalPosts();
-      });
+      // Server posts
+      if (data.hasOwnProperty('posts')) {
+        posts = data.posts;
+      } else {
+        console.log("Data has no posts!");
+      }
+
+      getLocalPosts();
+    });
   });
 
-  request.on('error', function (e) {
-      console.log("\n");
-      console.log(" ############");
-      console.log(e.message);
-      console.log(" ############");
+  request.on('error', function(e) {
+    console.log("\n");
+    console.log(" ############");
+    console.log(e.message);
+    console.log(" ############");
   });
   request.end();
 }
 
 function getLocalPosts() {
-  
+
   // Check posts from mongodb
   Rrpodcasts = mongoose.model('Rrpodcasts');
-  
+
   Rrpodcasts
-    .find({})
-    .sort({'created_at' : -1})
+    .find()
+    .sort({
+      _id: -1
+    })
     .limit(5)
     .exec(function(err, posts) {
-      if(err) {
+      if (err) {
         console.log(err);
         return;
       }
@@ -109,43 +111,48 @@ function checkPossibleNewPosts(data) {
       var savedPost = databasePodcasts[i];
       if (savedPost.id === possibleNewPost._id) {
         isNewPost = false;
-      };
-    };
+      }
+    }
 
     //isNewPost = true;
-    if(isNewPost){
+    if (isNewPost) {
       //Save item
-      if(possibleNewPost.hasOwnProperty('files')){
+      if (possibleNewPost.hasOwnProperty('files')) {
         var fileName = possibleNewPost.files[0];
-        if(fileName){
+        if (fileName) {
           var extension = fileName.split('.').pop();
-          if(extension === 'mp3'){
-            var podcast = new Rrpodcasts({
-              id: possibleNewPost._id,
-              filename: fileName,
-              date: possibleNewPost.created_at,
-              media: {
-                id: possibleNewPost.media.id,
-                thumbnail: possibleNewPost.media.thumbnail,
-                filesize: possibleNewPost.media.filesize,
-                title: possibleNewPost.media.title,
-                description: possibleNewPost.media.description
-              }
-            });
-            
-            podcast.save(function(err, podcast) {
-              if (err) return console.error(err);
-              console.dir("=====================");
-              console.dir("ID: " + podcast.id);
-              console.dir("ID: " + podcast.media.title);
-              console.dir("ID: " + podcast.media.description);
-            });
+          if (extension === 'mp3') {
+            saveContent(fileName, possibleNewPost);
           }
         }
-      }      
+      }
     }
-  };
+  }
+  
 }
 
+function saveContent(fileName, possibleNewPost) {
 
-var rrpodcastsfetch = module.exports = new Rrpodcastsfetch;
+  var podcast = new Rrpodcasts({
+    id: possibleNewPost._id,
+    filename: fileName,
+    date: possibleNewPost.created_at,
+    media: {
+      id: possibleNewPost.media.id,
+      thumbnail: possibleNewPost.media.thumbnail,
+      filesize: possibleNewPost.media.filesize,
+      title: possibleNewPost.media.title,
+      description: possibleNewPost.media.description
+    }
+  });
+
+  podcast.save(function(err, podcast) {
+    if (err) return console.error(err);
+    console.dir("=====================");
+    console.dir("ID: " + podcast.id);
+    console.dir("Title: " + podcast.media.title);
+    console.dir("Description: " + podcast.media.description);
+  });
+}
+
+var rrpodcastsfetch = module.exports = new Rrpodcastsfetch();
