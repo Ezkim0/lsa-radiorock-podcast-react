@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 var React = require('react');
+var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
 
 // Method to retrieve state from Stores
 module.exports = React.createClass({
@@ -11,8 +12,16 @@ module.exports = React.createClass({
     // Set initial application state using props
     //console.log(this.props.items);
 
-    return {
-      items: {}
+    if (ExecutionEnvironment.canUseDOM) {
+      console.log("Tänne");
+      window.addEventListener('scroll', this.handleScroll);
+    }
+
+    return{
+      items: {},
+      page:0,
+      loadingFlag:false,
+      url:"loadComment.php"
     };
   },
 
@@ -24,6 +33,27 @@ module.exports = React.createClass({
   // Remove change listers from stores
   componentWillUnmount: function() {
     
+  },
+
+  handleScroll: function() {
+    console.log("SCROLL ");
+    //console.info(JSON.stringify(this.props.items));
+
+    var windowHeight = $(window).height();
+    var inHeight = window.innerHeight;
+    var scrollT = $(window).scrollTop();
+    var totalScrolled = scrollT+inHeight;
+
+    console.log("... " + totalScrolled);
+    console.log("... " + this.state.loadingFlag);
+
+    if(totalScrolled+100>windowHeight){ //user reached at bottom
+      if(!this.state.loadingFlag){ //to avoid multiple request
+        this.setState({
+          loadingFlag:true,
+        });
+      }
+    }
   },
 
   render: function() {

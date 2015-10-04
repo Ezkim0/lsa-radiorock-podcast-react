@@ -1,6 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /** @jsx React.DOM */
 var React = require('react');
+var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
 
 // Method to retrieve state from Stores
 module.exports = React.createClass({displayName: "exports",
@@ -10,10 +11,18 @@ module.exports = React.createClass({displayName: "exports",
     props = props || this.props;
 
     // Set initial application state using props
-    console.log(this.props.items);
+    //console.log(this.props.items);
 
-    return {
-      data: {}
+    if (ExecutionEnvironment.canUseDOM) {
+      console.log("Tänne");
+      window.addEventListener('scroll', this.handleScroll);
+    }
+
+    return{
+      items: {},
+      page:0,
+      loadingFlag:false,
+      url:"loadComment.php"
     };
   },
 
@@ -27,24 +36,76 @@ module.exports = React.createClass({displayName: "exports",
     
   },
 
+  handleScroll: function() {
+    console.log("SCROLL ");
+    //console.info(JSON.stringify(this.props.items));
+
+    var windowHeight = $(window).height();
+    var inHeight = window.innerHeight;
+    var scrollT = $(window).scrollTop();
+    var totalScrolled = scrollT+inHeight;
+
+    console.log("... " + totalScrolled);
+    console.log("... " + this.state.loadingFlag);
+
+    if(totalScrolled+100>windowHeight){ //user reached at bottom
+      if(!this.state.loadingFlag){ //to avoid multiple request
+        this.setState({
+          loadingFlag:true,
+        });
+      }
+    }
+  },
+
   render: function() {
+    var documentRows = "";
+
+    if (this.props.items) {
+      documentRows = this.props.items.map(function(variant, index) {
+        return (
+          React.createElement("tr", {key: index, height: "200px"}, 
+            React.createElement("td", null, variant.media.title), 
+            React.createElement("td", null, variant.media.description), 
+            React.createElement("td", null, "TEST"), 
+            React.createElement("td", null, "TEST")
+          )
+        )
+      }, this);
+    }
+
     return (
       React.createElement("div", null, 
-        React.createElement("h1", null, "React Test: ", this.props.name)
+        React.createElement("h1", null, "React Test: ", this.props.name), 
+
+        React.createElement("table", {className: "table table-hover"}, 
+          React.createElement("thead", null, 
+            React.createElement("tr", null, 
+              React.createElement("th", null, "Title"), 
+              React.createElement("th", null, "Description"), 
+              React.createElement("th", null, "TEST"), 
+              React.createElement("th", null, "TEST")
+            )
+          ), 
+          React.createElement("tbody", null, 
+            documentRows
+          )
+      )
       )
     );
   }
   
 });
 
-},{"react":158}],2:[function(require,module,exports){
+},{"react":158,"react/lib/ExecutionEnvironment":23}],2:[function(require,module,exports){
 /** @jsx React.DOM */
 var React = require('react');
 var ReactAppTest = require('./ReactAppTest.jsx');
 
+var initialState = JSON.parse(document.getElementById('initial-state').innerHTML);
+
 // Render the components, picking up where react left off on the server
 React.render(
-  React.createElement(ReactAppTest, {name: "Matti Murtonen"}),
+  React.createElement(ReactAppTest, {items: initialState}),
   document.getElementById('react-app')
 );
 

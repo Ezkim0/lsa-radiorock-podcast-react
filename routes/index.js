@@ -22,7 +22,6 @@ router.get('/', function(req, res, next) {
 
 		var markup = React.renderToString(
 			ReactAppTest({
-				name: "testi",
 				items: items
 			})
 		);
@@ -30,7 +29,8 @@ router.get('/', function(req, res, next) {
 		// render index page 
 		res.render('index', {
 			title: 'RR-podcasts',
-			markup: markup
+			state: JSON.stringify(items),
+			markup: markup			
 		});
 
 	});

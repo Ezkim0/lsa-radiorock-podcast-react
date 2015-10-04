@@ -70,7 +70,7 @@ rrpodcastsSchema.statics = {
     var perPage = 2;
     var page = 1;
 
-    console.log(query);
+    //console.log(query);
 
     if (query.hasOwnProperty("page")) {
       page = parseInt(query.page);
