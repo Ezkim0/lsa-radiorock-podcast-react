@@ -15,21 +15,27 @@ router.get('/', function(req, res, next) {
 	//res.render('index');
 
 	// get data
-	
+	Rrpodcasts.list(req.query, function(err, items) {
+		if (err) {
+			return res.sendStatus(500);
+		}
 
+		var markup = React.renderToString(
+			ReactAppTest({
+				name: "testi",
+				items: items
+			})
+		);
 
-	var markup = React.renderToString (
-      ReactAppTest({
-        testData: {name:"testi"}
-      })
-    );   
+		// render index page 
+		res.render('index', {
+			title: 'RR-podcasts',
+			markup: markup
+		});
 
-
-	// render index page 
-	res.render('index', {
-		title: 'TEST',
-		markup: markup
 	});
+
+
 
 });
 

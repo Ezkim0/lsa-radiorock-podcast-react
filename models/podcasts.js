@@ -70,7 +70,7 @@ rrpodcastsSchema.statics = {
     var perPage = 2;
     var page = 1;
 
-    console.log();
+    console.log(query);
 
     if (query.hasOwnProperty("page")) {
       page = parseInt(query.page);
@@ -88,8 +88,8 @@ rrpodcastsSchema.statics = {
         .exec(cb);
     } else {
       this.find({})
-        .limit(perPage)
-        .skip(perPage * page)
+        .limit(perPage * page)
+        //.skip(perPage * page)
         .exec(cb);
     }
 
@@ -99,7 +99,16 @@ rrpodcastsSchema.statics = {
     .find({})
     .sort({'created_at' : -1})
     .exec(cb);*/
+  },
+
+  getPodcasts: function(query, cb) {
+      
+
+
+
+
   }
+
 };
 
 var Rrpodcasts = mongoose.model('Rrpodcasts', rrpodcastsSchema);

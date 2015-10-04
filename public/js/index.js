@@ -10,7 +10,7 @@ module.exports = React.createClass({displayName: "exports",
     props = props || this.props;
 
     // Set initial application state using props
-    
+    console.log(this.props.items);
 
     return {
       data: {}

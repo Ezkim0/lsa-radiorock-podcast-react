@@ -4,6 +4,6 @@ var ReactAppTest = require('./ReactAppTest.jsx');
 
 // Render the components, picking up where react left off on the server
 React.render(
-  <ReactAppTest name='Matti Murtonen'/>,
+  <ReactAppTest />,
   document.getElementById('react-app')
 );

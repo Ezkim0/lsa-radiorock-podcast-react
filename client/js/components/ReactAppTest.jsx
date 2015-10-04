@@ -11,7 +11,7 @@ module.exports = React.createClass({
 
     // Set initial application state using props
     return {
-      companies: {}
+      data: {}
     };
   },
 
