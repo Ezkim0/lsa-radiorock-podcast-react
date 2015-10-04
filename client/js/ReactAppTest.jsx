@@ -1,5 +1,4 @@
 /** @jsx React.DOM */
-
 var React = require('react');
 
 // Method to retrieve state from Stores
@@ -10,8 +9,10 @@ module.exports = React.createClass({
     props = props || this.props;
 
     // Set initial application state using props
+    
+
     return {
-      testData: {}
+      data: {}
     };
   },
 
