@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "build:js": "browserify client/js/react-app.js > public/js/index.js",
+    "build": "npm run build:js",
+    "watch:js": "watch \"npm run build:js\" client/js/",
+    "dev": "npm run build & npm run watch:js"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
@@ -15,6 +19,20 @@
     "mongoose-pages": "0.0.3",
     "mongoose-paginate": "^4.2.0",
     "morgan": "~1.6.1",
+    "node-jsx": "^0.13.3",
+    "react": "^0.13.3",
     "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "browserify": "~6.0.3",
+    "nodemon": "^1.2.1",
+    "reactify": "1.1.1",
+    "uglify-js": "~2.4.15",
+    "watch": "^0.16.0"
+  },
+  "browserify": {
+    "transform": [
+      "reactify"
+    ]
   }
 }
