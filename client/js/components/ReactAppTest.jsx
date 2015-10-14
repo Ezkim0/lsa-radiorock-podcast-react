@@ -28,7 +28,7 @@ module.exports = React.createClass({
   render: function() {
     return (
       <div>
-        <h1>React Test: {this.props.name}</h1>
+        
       </div>
     );
   }

@@ -13,10 +13,10 @@ module.exports = React.createClass({displayName: "exports",
     // Set initial application state using props
     //console.log(this.props.items);
 
-    if (ExecutionEnvironment.canUseDOM) {
+    /*if (ExecutionEnvironment.canUseDOM) {
       console.log("Tänne");
       window.addEventListener('scroll', this.handleScroll);
-    }
+    }*/
 
     return{
       items: {},
@@ -28,7 +28,7 @@ module.exports = React.createClass({displayName: "exports",
 
   // Add change listeners to stores
   componentDidMount: function() {
-    
+    window.addEventListener('scroll', this.handleScroll);
   },
 
   // Remove change listers from stores
@@ -45,53 +45,135 @@ module.exports = React.createClass({displayName: "exports",
     var scrollT = $(window).scrollTop();
     var totalScrolled = scrollT+inHeight;
 
-    console.log("... " + totalScrolled);
-    console.log("... " + this.state.loadingFlag);
+    /*
+    console.log("windowHeight: " + windowHeight);
+    console.log("inHeight: " + inHeight);
+    console.log("scrollT: " + scrollT);
+    console.log("totalScrolled: " + totalScrolled);
+    console.log("loadingFlag " + this.state.loadingFlag);
+    */
+    
 
-    if(totalScrolled+100>windowHeight){ //user reached at bottom
+    //console.log("... " + totalScrolled);
+    //console.log("... " + this.state.loadingFlag);
+
+    if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+       alert("near bottom!");
+    }
+
+    /*if(totalScrolled+100>windowHeight){ //user reached at bottom
       if(!this.state.loadingFlag){ //to avoid multiple request
         this.setState({
           loadingFlag:true,
         });
       }
-    }
+    }*/
   },
 
   render: function() {
     var documentRows = "";
 
+    /*if (this.props.items) {
+      documentRows = this.props.items.map(function(variant, index) {
+        return (
+          <tr key={index} height="200px">
+            <td>{variant.media.title}</td>
+            <td>{variant.media.description}</td>
+            <td>TEST</td>
+            <td>TEST</td>
+          </tr>
+        )
+      }, this);
+    }*/
+
     if (this.props.items) {
       documentRows = this.props.items.map(function(variant, index) {
         return (
-          React.createElement("tr", {key: index, height: "200px"}, 
-            React.createElement("td", null, variant.media.title), 
-            React.createElement("td", null, variant.media.description), 
-            React.createElement("td", null, "TEST"), 
-            React.createElement("td", null, "TEST")
+          React.createElement("div", {className: "col-xs-12 col-sm-6 col-md-4 col-lg-3"}, 
+            React.createElement("div", {className: "offer offer-danger"}, 
+              React.createElement("div", {className: "offer-header"}, 
+                React.createElement("h3", {className: "lead"}, variant.media.title)
+              ), 
+              React.createElement("div", {className: "offer-player"}
+              ), 
+              React.createElement("div", {className: "offer-content"}, 
+                React.createElement("h4", {className: "offer-content"}, variant.media.description)
+              )
+            )
           )
         )
       }, this);
     }
+ 
+    /*return (
+      <div>
+        <h1>React Test: {this.props.name}</h1>
+
+        <table className="table table-hover">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>TEST</th>
+              <th>TEST</th>
+            </tr>
+          </thead>
+          <tbody>
+            {documentRows}
+          </tbody>            
+      </table>
+      </div>
+    );*/
+
+    
+    /*.container
+      .row
+        .col-lg-12.tag-holder
+          button.tag-button.center-block(type="button") Korporaatio
+      .row
+        .col-xs-12.col-sm-6.col-md-4.col-lg-3(ng-repeat="post in reverse(posts)", my-post-repeat-directive)
+          .offer.offer-danger
+            .shape(ng-show="showNewBadge(post.date)")
+              .shape-text
+                | new
+            .offer-header
+              h3.lead(ng-bind="parseDate(post.date)")
+            .offer-player
+              audio(controls, preload="none")
+                source(ng-src="{{getAudioPath(post.filename)}}", type="audio/mpeg")
+            .offer-content
+              h4(ng-bind="post.media.title")
+  */
+
+    /*return (
+      <div>
+        <h1>React Test: {this.props.name}</h1>
+
+        <table className="table table-hover">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>TEST</th>
+              <th>TEST</th>
+            </tr>
+          </thead>
+          <tbody>
+            {documentRows}
+          </tbody>            
+      </table>
+      </div>
+    );*/
 
     return (
-      React.createElement("div", null, 
-        React.createElement("h1", null, "React Test: ", this.props.name), 
-
-        React.createElement("table", {className: "table table-hover"}, 
-          React.createElement("thead", null, 
-            React.createElement("tr", null, 
-              React.createElement("th", null, "Title"), 
-              React.createElement("th", null, "Description"), 
-              React.createElement("th", null, "TEST"), 
-              React.createElement("th", null, "TEST")
-            )
-          ), 
-          React.createElement("tbody", null, 
-            documentRows
-          )
-      )
+      React.createElement("div", {className: "container"}, 
+        React.createElement("div", {className: "row"}, 
+          documentRows
+        )
       )
     );
+
+
   }
   
 });
