@@ -67,10 +67,10 @@ rrpodcastsSchema.statics = {
   list: function(query, cb) {
     var getAll = false;
 
-    var perPage = 2;
+    var perPage = 10;
     var page = 1;
 
-    //console.log(query);
+    console.log(query);
 
     if (query.hasOwnProperty("page")) {
       page = parseInt(query.page);
@@ -88,25 +88,14 @@ rrpodcastsSchema.statics = {
         .exec(cb);
     } else {
       this.find({})
-        .limit(perPage * page)
-        //.skip(perPage * page)
+        .limit(perPage)
+        .skip(perPage * page)
         .exec(cb);
     }
-
-
-
-    /*this
-    .find({})
-    .sort({'created_at' : -1})
-    .exec(cb);*/
   },
 
   getPodcasts: function(query, cb) {
       
-
-
-
-
   }
 
 };

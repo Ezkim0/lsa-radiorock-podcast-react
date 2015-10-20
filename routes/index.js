@@ -13,7 +13,7 @@ var ReactAppTest = React.createFactory(require('../client/js/ReactAppTest.jsx'))
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	//res.render('index');
-
+	req.query = {page: 1};
 	// get data
 	Rrpodcasts.list(req.query, function(err, items) {
 		if (err) {

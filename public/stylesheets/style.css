@@ -60,6 +60,11 @@ a {
   margin: 15px 0;
   overflow: hidden;
 }
+
+.test {
+  height: 300px;
+}
+
 .shape {
   border-color: rgba(255, 255, 255, 0) #d9534f rgba(255, 255, 255, 0) rgba(255, 255, 255, 0);
 }

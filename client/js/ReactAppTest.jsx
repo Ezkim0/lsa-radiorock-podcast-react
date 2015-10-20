@@ -2,6 +2,8 @@
 var React = require('react');
 var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
 
+var temp = [];
+
 // Method to retrieve state from Stores
 module.exports = React.createClass({
   
@@ -44,20 +46,26 @@ module.exports = React.createClass({
     var scrollT = $(window).scrollTop();
     var totalScrolled = scrollT+inHeight;
 
-    /*
-    console.log("windowHeight: " + windowHeight);
-    console.log("inHeight: " + inHeight);
-    console.log("scrollT: " + scrollT);
-    console.log("totalScrolled: " + totalScrolled);
-    console.log("loadingFlag " + this.state.loadingFlag);
-    */
-    
-
-    //console.log("... " + totalScrolled);
-    //console.log("... " + this.state.loadingFlag);
-
     if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-       alert("near bottom!");
+       console.log("near bottom!");
+       console.log("Load new data!");
+
+       $.ajax({
+            url: "http://localhost:3000/api/podcasts/all?page=2",
+            success: function(data) {
+              console.log("......fdasdfasf... " );
+
+              console.log(this.props);
+              console.log(data);
+
+              temp = data.concat(this.props.items);
+
+              console.log("------");
+              console.log(temp);
+
+              this.setState({items: temp});
+            }.bind(this)
+        });
     }
 
     /*if(totalScrolled+100>windowHeight){ //user reached at bottom
@@ -85,10 +93,15 @@ module.exports = React.createClass({
       }, this);
     }*/
 
+
+
+    console.log("RENDER! " + temp.length);
+
     if (this.props.items) {
-      documentRows = this.props.items.map(function(variant, index) {
+      if(temp.length > 0){
+        documentRows = temp.map(function(variant, index) {
         return (
-          <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+          <div key={index} className="col-xs-12 col-sm-6 col-md-4 col-lg-3 test" >
             <div className="offer offer-danger">
               <div className="offer-header">
                 <h3 className="lead">{variant.media.title}</h3>
@@ -102,6 +115,25 @@ module.exports = React.createClass({
           </div>
         )
       }, this);
+      } else {
+        documentRows = this.props.items.map(function(variant, index) {
+        return (
+          <div key={index} className="col-xs-12 col-sm-6 col-md-4 col-lg-3 test" >
+            <div className="offer offer-danger">
+              <div className="offer-header">
+                <h3 className="lead">{variant.media.title}</h3>
+              </div>
+              <div className="offer-player">
+              </div>
+              <div className="offer-content">
+                <h4 className="offer-content">{variant.media.description}</h4>
+              </div>
+            </div>
+          </div>
+        )
+      }, this);
+      }
+      
     }
  
     /*return (
