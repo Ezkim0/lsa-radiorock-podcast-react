@@ -2,15 +2,15 @@
 <html>
 <head>
 <title>Page Title</title>
-<link rel="stylesheet" type="text/css" href="css/main_style.css">
 <link rel="stylesheet" href="css/animate.css">
+<link rel="stylesheet" type="text/css" href="css/main_style.css">
 </head>
 <body>
 
 	<button onClick="show()">SHOW</button>
 	<button onClick="hide()">HIDE</button>
 
-	<div id="podcast-player" class="bottom-container animated">
+	<div id="podcast-player" class="bottom-container animated player-animation">
 		<div class="player-container">
 			<audio id="music" preload="true">
   			<source src="http://www.alexkatz.me/codepen/music/interlude.mp3">
@@ -24,6 +24,12 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="thumbnail animated zoomIn thumbnail-animation">
+
+	</div>
+
+	<img src="images/loader.gif" />
 
 </body>
 <script src="js/main.js"></script>
