@@ -2,7 +2,7 @@
 var React = require('react');
 var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
 
-var temp = [];
+var localItems = [];
 
 // Method to retrieve state from Stores
 module.exports = React.createClass({
@@ -20,8 +20,8 @@ module.exports = React.createClass({
     }*/
 
     return{
-      items: {},
-      page:0,
+      items: props.items,
+      page:1,
       loadingFlag:false,
       url:"loadComment.php"
     };
@@ -30,6 +30,10 @@ module.exports = React.createClass({
   // Add change listeners to stores
   componentDidMount: function() {
     window.addEventListener('scroll', this.handleScroll);
+
+    this.setState({
+      page: 1
+    });
   },
 
   // Remove change listers from stores
@@ -49,21 +53,14 @@ module.exports = React.createClass({
     if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
        console.log("near bottom!");
        console.log("Load new data!");
+       console.log("page: " + this.state.page);
+       this.state.page++;
 
        $.ajax({
-            url: "http://localhost:3000/api/podcasts/all?page=2",
+            url: "http://localhost:3000/api/podcasts/all?page=" + this.state.page,
             success: function(data) {
-              console.log("......fdasdfasf... " );
-
-              console.log(this.props);
-              console.log(data);
-
-              temp = data.concat(this.props.items);
-
-              console.log("------");
-              console.log(temp);
-
-              this.setState({items: temp});
+              localItems = this.state.items.concat(data);
+              this.setState({items: localItems});
             }.bind(this)
         });
     }
@@ -95,106 +92,26 @@ module.exports = React.createClass({
 
 
 
-    console.log("RENDER! " + temp.length);
+    console.log("RENDER!!! " + this.state.items.length);
 
-    if (this.props.items) {
-      if(temp.length > 0){
-        documentRows = temp.map(function(variant, index) {
+    var items;
+
+    if(this.state.items){
+      documentRows = this.state.items.map(function(variant, index) {
         return (
           <div key={index} className="col-xs-12 col-sm-6 col-md-4 col-lg-3 test" >
             <div className="offer offer-danger">
               <div className="offer-header">
-                <h3 className="lead">{variant.media.title}</h3>
-              </div>
-              <div className="offer-player">
+                <h3 className="lead">{variant.date}</h3>
               </div>
               <div className="offer-content">
-                <h4 className="offer-content">{variant.media.description}</h4>
+                <h4 className="offer-content">{variant.media.title}</h4>
               </div>
             </div>
           </div>
         )
-      }, this);
-      } else {
-        documentRows = this.props.items.map(function(variant, index) {
-        return (
-          <div key={index} className="col-xs-12 col-sm-6 col-md-4 col-lg-3 test" >
-            <div className="offer offer-danger">
-              <div className="offer-header">
-                <h3 className="lead">{variant.media.title}</h3>
-              </div>
-              <div className="offer-player">
-              </div>
-              <div className="offer-content">
-                <h4 className="offer-content">{variant.media.description}</h4>
-              </div>
-            </div>
-          </div>
-        )
-      }, this);
-      }
-      
+      }, this);      
     }
- 
-    /*return (
-      <div>
-        <h1>React Test: {this.props.name}</h1>
-
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Description</th>
-              <th>TEST</th>
-              <th>TEST</th>
-            </tr>
-          </thead>
-          <tbody>
-            {documentRows}
-          </tbody>            
-      </table>
-      </div>
-    );*/
-
-    
-    /*.container
-      .row
-        .col-lg-12.tag-holder
-          button.tag-button.center-block(type="button") Korporaatio
-      .row
-        .col-xs-12.col-sm-6.col-md-4.col-lg-3(ng-repeat="post in reverse(posts)", my-post-repeat-directive)
-          .offer.offer-danger
-            .shape(ng-show="showNewBadge(post.date)")
-              .shape-text
-                | new
-            .offer-header
-              h3.lead(ng-bind="parseDate(post.date)")
-            .offer-player
-              audio(controls, preload="none")
-                source(ng-src="{{getAudioPath(post.filename)}}", type="audio/mpeg")
-            .offer-content
-              h4(ng-bind="post.media.title")
-  */
-
-    /*return (
-      <div>
-        <h1>React Test: {this.props.name}</h1>
-
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Description</th>
-              <th>TEST</th>
-              <th>TEST</th>
-            </tr>
-          </thead>
-          <tbody>
-            {documentRows}
-          </tbody>            
-      </table>
-      </div>
-    );*/
 
     return (
       <div className="container">
