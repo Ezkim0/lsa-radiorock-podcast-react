@@ -27,6 +27,7 @@ Rrpodcastsfetch.prototype.start = function() {
 };
 
 function getData() {
+  console.log("================================");
   console.log("Checking new data from server...");
   getNewPosts();
 }
@@ -104,6 +105,7 @@ function checkPossibleNewPosts(data) {
   var newPosts = [];
   var isNewPost = true;
   var possibleNewPost;
+  var addedNewPost = false;
   for (var j = 0; j <= posts.length - 1; j++) {
     possibleNewPost = posts[j];
     isNewPost = true;
@@ -123,11 +125,17 @@ function checkPossibleNewPosts(data) {
         if (fileName) {
           var extension = fileName.split('.').pop();
           if (extension === 'mp3') {
+            addedNewPost = true;
             saveContent(fileName, possibleNewPost);
           }
         }
       }
     }
+  }
+
+  if (!addedNewPost) {
+    console.log("No new data added!");
+    console.log("================================\n");
   }
   
 }
@@ -149,10 +157,11 @@ function saveContent(fileName, possibleNewPost) {
 
   podcast.save(function(err, podcast) {
     if (err) return console.error(err);
-    console.dir("=====================");
-    console.dir("ID: " + podcast.id);
-    console.dir("Title: " + podcast.media.title);
-    console.dir("Description: " + podcast.media.description);
+    console.log("=====================");
+    console.log("ID: " + podcast.id);
+    console.log("Title: " + podcast.media.title);
+    console.log("Description: " + podcast.media.description);
+    console.log("New data saved!");
   });
 }
 

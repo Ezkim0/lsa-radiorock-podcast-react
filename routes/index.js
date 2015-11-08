@@ -7,13 +7,13 @@ var JSX = require('node-jsx').install({
 	extension: '.jsx'
 });
 var React = require('react');
-var ReactAppTest = React.createFactory(require('../client/js/ReactAppTest.jsx'));
+var ReactAppTest = React.createFactory(require('../client/js/components/PodCastsApp.jsx'));
 
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	//res.render('index');
-	req.query = {page: 1};
+	req.query = {page: 0};
 	// get data
 	Rrpodcasts.list(req.query, function(err, items) {
 		if (err) {
