@@ -5,6 +5,9 @@ var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
 var PodCastsItem = require('./PodCastsItem.jsx');
 var PodCastsPlayer = require('./PodCastsPlayer.jsx');
 
+var PodCastsStore = require('../stores/PodCastsStore');
+var PodCastsPlayerActions = require('../actions/PodCastsPlayerActions');
+
 var localItems = [];
 
 // Method to retrieve state from Stores
@@ -32,6 +35,7 @@ module.exports = React.createClass({
   // Add change listeners to stores
   componentDidMount: function() {
     window.addEventListener('scroll', this.handleScroll);
+    PodCastsStore.addChangeListener(this._onChange);
 
     this.setState({
       page: 0
@@ -40,7 +44,7 @@ module.exports = React.createClass({
 
   // Remove change listers from stores
   componentWillUnmount: function() {
-    
+    PodCastsStore.removeChangeListener(this._onChange);
   },
 
   handleScroll: function() {
@@ -68,6 +72,10 @@ module.exports = React.createClass({
             success: function(data) {
               localItems = this.state.items.concat(data);
               this.setState({items: localItems, loadingFlag : false});
+
+              PodCastsPlayerActions.testText("TESTI TESTI!");
+
+
             }.bind(this),
             error: function (jqXHR, textStatus, errorThrown) {
               console.log("Error loading new page!");
@@ -114,8 +122,17 @@ module.exports = React.createClass({
         <PodCastsPlayer/>
       </div>
     );
+  },
 
+  /*function getPagesState() {
+    return {};
+  },*/
 
+  _onChange: function() {
+    //this.setState();
+    console.log("onchange PodCastsApp!");
+    console.log(PodCastsStore.getCurrentPage());
+    console.log(PodCastsStore.loadPodCasts());
   }
   
 });

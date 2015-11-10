@@ -1,28 +1,53 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher');
-var CompanyConstants = require('../constants/CompanyConstants');
-var CompanyStore = require('../stores/CompanyStore');
+var PodCastsConstants = require('../constants/PodCastsConstants');
+var PodCastsStore = require('../stores/PodCastsStore');
 
 var rest = require('rest');
 var mime = require('rest/interceptor/mime');
 var client = rest.wrap(mime);
 
 // Define actions object
-var CompanyActions = {
+var PodCastsPlayerActions = {
 
-  // Load company data
+  // Load new page
   loadCompany: function(companyId) {
     client({path: '/api/companies/' + companyId}).then(function(response) {
-        CompanyActions.receiveCompany(response.entity);
+        PodCastsPlayerActions.receiveCompany(response.entity);
     });
   },
   
   // Receive inital product data
   receiveCompany: function(data) {
     AppDispatcher.handleAction({
-      actionType: CompanyConstants.RECEIVE_COMPANY,
+      actionType: PodCastsConstants.RECEIVE_COMPANY,
       data: data
     })
+  },
+
+
+  testText: function() {
+    //console.log("testText " + value);
+    
+
+    var page = PodCastsStore.getCurrentPage();
+    console.log("testText " + page);
+    
+
+    client({
+      path: 'api/podcasts/all?page=' + page
+    }).then(function(response) {
+      AppDispatcher.dispatch({
+        actionType: PodCastsConstants.PODCASTS_TEST,
+        text: response.entity
+      });
+    });
+
+
+   
   }
+
+
+
 };
 
-module.exports = CompanyActions;
+module.exports = PodCastsPlayerActions;
