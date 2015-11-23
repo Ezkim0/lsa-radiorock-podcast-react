@@ -8,7 +8,14 @@ var PodCastsPlayer = require('./PodCastsPlayer.jsx');
 var PodCastsStore = require('../stores/PodCastsStore');
 var PodCastsPlayerActions = require('../actions/PodCastsPlayerActions');
 
-var localItems = [];
+
+function getPodCastsState() {
+  return {
+    items: PodCastsStore.getPodCasts(),
+    page: PodCastsStore.getCurrentPage(),
+    loadingFlag:false
+  };
+}
 
 // Method to retrieve state from Stores
 module.exports = React.createClass({
@@ -30,6 +37,8 @@ module.exports = React.createClass({
       page: 0,
       loadingFlag:false
     };
+
+    //return getPodCastsState();
   },
 
   // Add change listeners to stores
@@ -66,21 +75,7 @@ module.exports = React.createClass({
           this.setState({
             loadingFlag:true,
           });
-
-          $.ajax({
-            url: "http://localhost:3000/api/podcasts/all?page=" + this.state.page,
-            success: function(data) {
-              localItems = this.state.items.concat(data);
-              this.setState({items: localItems, loadingFlag : false});
-
-              PodCastsPlayerActions.testText("TESTI TESTI!");
-
-
-            }.bind(this),
-            error: function (jqXHR, textStatus, errorThrown) {
-              console.log("Error loading new page!");
-            }
-          });
+          PodCastsPlayerActions.loadPodCasts(PodCastsStore.getNextPage());
         }
     }
        
@@ -112,6 +107,13 @@ module.exports = React.createClass({
       }, this);
     }
 
+    var loader;
+    if(this.state.loadingFlag){
+      loader = <div className="loaderAnimaton">
+          <img src="images/assets/loader.gif" className="loaderImage"/>
+        </div>;
+    }
+
     return (
       <div>
         <div className="container">
@@ -120,19 +122,14 @@ module.exports = React.createClass({
           </div>
         </div>
         <PodCastsPlayer/>
+        {loader}
       </div>
     );
   },
 
-  /*function getPagesState() {
-    return {};
-  },*/
-
   _onChange: function() {
-    //this.setState();
-    console.log("onchange PodCastsApp!");
-    console.log(PodCastsStore.getCurrentPage());
-    console.log(PodCastsStore.loadPodCasts());
+    console.log("...._onChange");
+    this.setState(getPodCastsState());
   }
   
 });

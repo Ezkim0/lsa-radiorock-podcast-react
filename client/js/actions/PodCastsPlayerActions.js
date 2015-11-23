@@ -25,26 +25,30 @@ var PodCastsPlayerActions = {
   },
 
 
-  testText: function() {
-    //console.log("testText " + value);
-    
+  loadPodCasts: function(page) {
+    console.log("loadPodCasts " + page);
 
-    var page = PodCastsStore.getCurrentPage();
-    console.log("testText " + page);
-    
+    //var page = PodCastsStore.getCurrentPage();
+    //console.log("testText " + page);
 
     client({
       path: 'api/podcasts/all?page=' + page
     }).then(function(response) {
       AppDispatcher.dispatch({
-        actionType: PodCastsConstants.PODCASTS_TEST,
-        text: response.entity
+        actionType: PodCastsConstants.PODCASTS_LOADED,
+        podcasts: response.entity
       });
     });
 
+  },
 
-   
-  }
+  setPodCastFilename: function(filename) {
+    AppDispatcher.dispatch({
+      actionType: PodCastsConstants.SET_PODCAST,
+      podCastFilename: filename
+    });
+
+  },
 
 
 

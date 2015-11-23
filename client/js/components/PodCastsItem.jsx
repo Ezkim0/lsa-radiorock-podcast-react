@@ -2,7 +2,15 @@
 
 var React = require('react');
 var moment = require('moment');
-var baseUrl = "http://d3ac2fc8l4ni8x.cloudfront.net/";
+var PodCastsPlayerActions = require('../actions/PodCastsPlayerActions');
+var PodCastsPlayer = require('./PodCastsPlayer.jsx');
+var PodCastsStore = require('../stores/PodCastsStore');
+
+function getPodCastsItemState() {
+  return {
+    currentPodCastUrl: PodCastsStore.getCurrentUrl()
+  };
+}
 
 module.exports = React.createClass({
   
@@ -11,16 +19,9 @@ module.exports = React.createClass({
 
     return {
       data: props.data,
+      currentPodCastUrl: null,
       index: props.index
     };
-  },
-
-  componentDidMount: function() {
-    
-  },
-
-  componentWillUnmount: function() {
-    
   },
 
   parseDate : function(string) {
@@ -29,26 +30,17 @@ module.exports = React.createClass({
 
   playPodcast : function(filename) {
     console.log("playPodcast");
-    console.log(filename);
-    
-    // http://www.alexkatz.me/codepen/music/interlude.mp3
-    // http://www.alexkatz.me/codepen/music/interlude.ogg
-
-    /*var audio = document.getElementById('music');
-
-    var source = document.getElementById('mp3Source');
-    source.src=baseUrl + filename;
-
-    audio.load(); 
-    audio.play(); */
-
-    //TODO: send file to player FLUX
-    
+    PodCastsPlayerActions.setPodCastFilename(filename);
   },
 
   render: function() {
 
     var content;
+
+    if(this.state.currentPodCastUrl){
+      console.log(">>>>: " + this.state.currentPodCastUrl);
+    }
+    
     if (this.state.data) {
       content = 
         <div className="offer offer-danger">
@@ -75,20 +67,6 @@ module.exports = React.createClass({
         </div>
 
     }
-
-    /*<div key={this.state.index} className="col-xs-12 col-sm-6 col-md-4 col-lg-3 test" >
-        <div className="offer offer-danger">
-          <div className="offer-header">
-            <h3 className="lead">{this.parseDate(this.state.data.date)}</h3>
-          </div>
-          <div className="play-button-container">
-            <button onClick={this.playPodcast.bind(this,this.state.data.filename)}>PLAY</button>
-          </div>
-          <div className="offer-content">
-            <h4 className="offer-content">{this.state.data.media.title}</h4>
-          </div>
-        </div>
-      </div>*/
 
     return (
       <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3 test" >

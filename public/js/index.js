@@ -26,26 +26,30 @@ var PodCastsPlayerActions = {
   },
 
 
-  testText: function() {
-    //console.log("testText " + value);
-    
+  loadPodCasts: function(page) {
+    console.log("loadPodCasts " + page);
 
-    var page = PodCastsStore.getCurrentPage();
-    console.log("testText " + page);
-    
+    //var page = PodCastsStore.getCurrentPage();
+    //console.log("testText " + page);
 
     client({
       path: 'api/podcasts/all?page=' + page
     }).then(function(response) {
       AppDispatcher.dispatch({
-        actionType: PodCastsConstants.PODCASTS_TEST,
-        text: response.entity
+        actionType: PodCastsConstants.PODCASTS_LOADED,
+        podcasts: response.entity
       });
     });
 
+  },
 
-   
-  }
+  setPodCastFilename: function(filename) {
+    AppDispatcher.dispatch({
+      actionType: PodCastsConstants.SET_PODCAST,
+      podCastFilename: filename
+    });
+
+  },
 
 
 
@@ -64,7 +68,14 @@ var PodCastsPlayer = require('./PodCastsPlayer.jsx');
 var PodCastsStore = require('../stores/PodCastsStore');
 var PodCastsPlayerActions = require('../actions/PodCastsPlayerActions');
 
-var localItems = [];
+
+function getPodCastsState() {
+  return {
+    items: PodCastsStore.getPodCasts(),
+    page: PodCastsStore.getCurrentPage(),
+    loadingFlag:false
+  };
+}
 
 // Method to retrieve state from Stores
 module.exports = React.createClass({displayName: "exports",
@@ -86,6 +97,8 @@ module.exports = React.createClass({displayName: "exports",
       page: 0,
       loadingFlag:false
     };
+
+    //return getPodCastsState();
   },
 
   // Add change listeners to stores
@@ -122,21 +135,7 @@ module.exports = React.createClass({displayName: "exports",
           this.setState({
             loadingFlag:true,
           });
-
-          $.ajax({
-            url: "http://localhost:3000/api/podcasts/all?page=" + this.state.page,
-            success: function(data) {
-              localItems = this.state.items.concat(data);
-              this.setState({items: localItems, loadingFlag : false});
-
-              PodCastsPlayerActions.testText("TESTI TESTI!");
-
-
-            }.bind(this),
-            error: function (jqXHR, textStatus, errorThrown) {
-              console.log("Error loading new page!");
-            }
-          });
+          PodCastsPlayerActions.loadPodCasts(PodCastsStore.getNextPage());
         }
     }
        
@@ -168,6 +167,13 @@ module.exports = React.createClass({displayName: "exports",
       }, this);
     }
 
+    var loader;
+    if(this.state.loadingFlag){
+      loader = React.createElement("div", {className: "loaderAnimaton"}, 
+          React.createElement("img", {src: "images/assets/loader.gif", className: "loaderImage"})
+        );
+    }
+
     return (
       React.createElement("div", null, 
         React.createElement("div", {className: "container"}, 
@@ -175,20 +181,15 @@ module.exports = React.createClass({displayName: "exports",
             documentRows
           )
         ), 
-        React.createElement(PodCastsPlayer, null)
+        React.createElement(PodCastsPlayer, null), 
+        loader
       )
     );
   },
 
-  /*function getPagesState() {
-    return {};
-  },*/
-
   _onChange: function() {
-    //this.setState();
-    console.log("onchange PodCastsApp!");
-    console.log(PodCastsStore.getCurrentPage());
-    console.log(PodCastsStore.loadPodCasts());
+    console.log("...._onChange");
+    this.setState(getPodCastsState());
   }
   
 });
@@ -198,7 +199,15 @@ module.exports = React.createClass({displayName: "exports",
 
 var React = require('react');
 var moment = require('moment');
-var baseUrl = "http://d3ac2fc8l4ni8x.cloudfront.net/";
+var PodCastsPlayerActions = require('../actions/PodCastsPlayerActions');
+var PodCastsPlayer = require('./PodCastsPlayer.jsx');
+var PodCastsStore = require('../stores/PodCastsStore');
+
+function getPodCastsItemState() {
+  return {
+    currentPodCastUrl: PodCastsStore.getCurrentUrl()
+  };
+}
 
 module.exports = React.createClass({displayName: "exports",
   
@@ -207,16 +216,9 @@ module.exports = React.createClass({displayName: "exports",
 
     return {
       data: props.data,
+      currentPodCastUrl: null,
       index: props.index
     };
-  },
-
-  componentDidMount: function() {
-    
-  },
-
-  componentWillUnmount: function() {
-    
   },
 
   parseDate : function(string) {
@@ -225,26 +227,17 @@ module.exports = React.createClass({displayName: "exports",
 
   playPodcast : function(filename) {
     console.log("playPodcast");
-    console.log(filename);
-    
-    // http://www.alexkatz.me/codepen/music/interlude.mp3
-    // http://www.alexkatz.me/codepen/music/interlude.ogg
-
-    /*var audio = document.getElementById('music');
-
-    var source = document.getElementById('mp3Source');
-    source.src=baseUrl + filename;
-
-    audio.load(); 
-    audio.play(); */
-
-    //TODO: send file to player FLUX
-    
+    PodCastsPlayerActions.setPodCastFilename(filename);
   },
 
   render: function() {
 
     var content;
+
+    if(this.state.currentPodCastUrl){
+      console.log(">>>>: " + this.state.currentPodCastUrl);
+    }
+    
     if (this.state.data) {
       content = 
         React.createElement("div", {className: "offer offer-danger"}, 
@@ -272,20 +265,6 @@ module.exports = React.createClass({displayName: "exports",
 
     }
 
-    /*<div key={this.state.index} className="col-xs-12 col-sm-6 col-md-4 col-lg-3 test" >
-        <div className="offer offer-danger">
-          <div className="offer-header">
-            <h3 className="lead">{this.parseDate(this.state.data.date)}</h3>
-          </div>
-          <div className="play-button-container">
-            <button onClick={this.playPodcast.bind(this,this.state.data.filename)}>PLAY</button>
-          </div>
-          <div className="offer-content">
-            <h4 className="offer-content">{this.state.data.media.title}</h4>
-          </div>
-        </div>
-      </div>*/
-
     return (
       React.createElement("div", {className: "col-xs-12 col-sm-6 col-md-4 col-lg-3 test"}, 
         content
@@ -295,10 +274,19 @@ module.exports = React.createClass({displayName: "exports",
   
 });
 
-},{"moment":14,"react":169}],4:[function(require,module,exports){
+},{"../actions/PodCastsPlayerActions":1,"../stores/PodCastsStore":8,"./PodCastsPlayer.jsx":4,"moment":14,"react":169}],4:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react');
+var PodCastsStore = require('../stores/PodCastsStore');
+var PodCastsPlayerActions = require('../actions/PodCastsPlayerActions');
+
+function getPodCastPlayerState() {
+  return {
+    currentPodCastUrl: PodCastsStore.getCurrentUrl(),
+    play: PodCastsStore.getPlaying()
+  };
+}
 
 // Method to retrieve state from Stores
 module.exports = React.createClass({displayName: "exports",
@@ -309,21 +297,40 @@ module.exports = React.createClass({displayName: "exports",
 
     // Set initial application state using props
     return {
-      data: {}
+      currentPodCastUrl: null,
+      play: false
     };
   },
 
   // Add change listeners to stores
   componentDidMount: function() {
-    
+    PodCastsStore.addChangeListener(this._onChange);
   },
 
   // Remove change listers from stores
   componentWillUnmount: function() {
-    
+    PodCastsStore.removeChangeListener(this._onChange);
+  },
+
+  play: function() {
+    console.log("PLAY!");
   },
 
   render: function() {
+
+    console.log("PodCastsPlayer");
+    console.log(this.state.currentPodCastUrl);
+   
+    if(this.state.currentPodCastUrl && this.state.play){
+      var audio = document.getElementById('music');
+
+      var source = document.getElementById('mp3Source');
+      source.src= this.state.currentPodCastUrl;
+
+      audio.load();
+      audio.play();
+    }
+
     return (
       React.createElement("div", {id: "podcast-player", className: "bottom-container animated player-animation"}, 
         React.createElement("div", {className: "player-container"}, 
@@ -332,7 +339,7 @@ module.exports = React.createClass({displayName: "exports",
             React.createElement("source", {id: "oggSource"})
           ), 
           React.createElement("div", {id: "audioplayer"}, 
-            React.createElement("button", {id: "pButton", onclick: "play()", className: "play"}), 
+            React.createElement("button", {id: "pButton", onClick: this.play, className: "play"}), 
             React.createElement("div", {id: "timeline"}, 
               React.createElement("div", {id: "playhead"})
             )
@@ -340,16 +347,23 @@ module.exports = React.createClass({displayName: "exports",
         )
       )
     );
+  },
+
+  _onChange: function() {
+    console.log(".......");
+    this.setState(getPodCastPlayerState());
   }
+
   
 });
 
-},{"react":169}],5:[function(require,module,exports){
+},{"../actions/PodCastsPlayerActions":1,"../stores/PodCastsStore":8,"react":169}],5:[function(require,module,exports){
 var keyMirror = require('react/lib/keyMirror');
 
 // Define action constants
 module.exports = keyMirror({
-  PODCASTS_TEST: null
+  PODCASTS_LOADED: null,
+  SET_PODCAST: null
 });
 
 },{"react/lib/keyMirror":154}],6:[function(require,module,exports){
@@ -392,8 +406,12 @@ var PodCastsConstants = require('../constants/PodCastsConstants');
 var _ = require('underscore');
 
 // Define initial data points
-var _text = null;
 var _currentPage = 0;
+var _podcasts = [];
+var _playing = false;
+
+var _podCastUrl;
+var _baseUrl = "http://d3ac2fc8l4ni8x.cloudfront.net/";
 
 // Method to load product data from mock API
 function loadProject(data) {
@@ -408,8 +426,21 @@ var PodCastsStore = _.extend({}, EventEmitter.prototype, {
     return _currentPage;
   },
 
-  loadPodCasts: function() {
-    return _text;
+  getNextPage: function() {
+    _currentPage++;
+    return _currentPage;
+  },
+
+  getPodCasts: function() {
+    return _podcasts;
+  },
+
+  getPlaying: function() {
+    return _playing;
+  },
+
+  getCurrentUrl: function() {
+    return _baseUrl + _podCastUrl;
   },
 
   // Emit Change event
@@ -431,19 +462,21 @@ var PodCastsStore = _.extend({}, EventEmitter.prototype, {
 
 // Register callback with AppDispatcher
 AppDispatcher.register(function(action) {
-  var text;
+  
+  console.log("PodCastsStore");
 
   switch(action.actionType) {
-
-    case PodCastsConstants.PODCASTS_TEST:
-      console.log("PODCASTS_TEST" + action.text);  
-      _text = action.text;
-      //text = action.text.trim();
-      /*if (text !== '') {
-        update(action.id, {text: text});
-        PodCastsStore.emitChange();
-      }*/
+    
+    case PodCastsConstants.SET_PODCAST:
+      console.log(".......... " + action.podCastFilename);
+      _podCastUrl = action.podCastFilename;
+      _playing = true;
       break;
+
+    case PodCastsConstants.PODCASTS_LOADED:
+      console.log("Tänne1");
+      _podcasts = _podcasts.concat(action.podcasts);
+      break;    
 
     default:
       return true;

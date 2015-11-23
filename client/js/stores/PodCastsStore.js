@@ -4,8 +4,12 @@ var PodCastsConstants = require('../constants/PodCastsConstants');
 var _ = require('underscore');
 
 // Define initial data points
-var _text = null;
 var _currentPage = 0;
+var _podcasts = [];
+var _playing = false;
+
+var _podCastUrl;
+var _baseUrl = "http://d3ac2fc8l4ni8x.cloudfront.net/";
 
 // Method to load product data from mock API
 function loadProject(data) {
@@ -20,8 +24,21 @@ var PodCastsStore = _.extend({}, EventEmitter.prototype, {
     return _currentPage;
   },
 
-  loadPodCasts: function() {
-    return _text;
+  getNextPage: function() {
+    _currentPage++;
+    return _currentPage;
+  },
+
+  getPodCasts: function() {
+    return _podcasts;
+  },
+
+  getPlaying: function() {
+    return _playing;
+  },
+
+  getCurrentUrl: function() {
+    return _baseUrl + _podCastUrl;
   },
 
   // Emit Change event
@@ -43,19 +60,21 @@ var PodCastsStore = _.extend({}, EventEmitter.prototype, {
 
 // Register callback with AppDispatcher
 AppDispatcher.register(function(action) {
-  var text;
+  
+  console.log("PodCastsStore");
 
   switch(action.actionType) {
-
-    case PodCastsConstants.PODCASTS_TEST:
-      console.log("PODCASTS_TEST" + action.text);  
-      _text = action.text;
-      //text = action.text.trim();
-      /*if (text !== '') {
-        update(action.id, {text: text});
-        PodCastsStore.emitChange();
-      }*/
+    
+    case PodCastsConstants.SET_PODCAST:
+      console.log(".......... " + action.podCastFilename);
+      _podCastUrl = action.podCastFilename;
+      _playing = true;
       break;
+
+    case PodCastsConstants.PODCASTS_LOADED:
+      console.log("Tänne1");
+      _podcasts = _podcasts.concat(action.podcasts);
+      break;    
 
     default:
       return true;
