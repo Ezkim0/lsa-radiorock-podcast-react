@@ -331,8 +331,10 @@ module.exports = React.createClass({displayName: "exports",
       audio.play();
     }
 
+    // player-animated
+
     return (
-      React.createElement("div", {id: "podcast-player", className: "bottom-container animated player-animation"}, 
+      React.createElement("div", {id: "podcast-player", className: "bottom-container"}, 
         React.createElement("div", {className: "player-container"}, 
           React.createElement("audio", {id: "music", preload: "true"}, 
             React.createElement("source", {id: "mp3Source"}), 
@@ -26766,7 +26768,7 @@ define(function() {
 	 * @returns {String} formatted string, suitable for output to developers
 	 */
 	function formatError(e) {
-		var s = typeof e === 'object' && e !== null && e.stack ? e.stack : formatObject(e);
+		var s = typeof e === 'object' && e !== null && (e.stack || e.message) ? e.stack || e.message : formatObject(e);
 		return e instanceof Error ? s : s + ' (WARNING: non-Error used)';
 	}
 

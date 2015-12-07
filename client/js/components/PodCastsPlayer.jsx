@@ -54,8 +54,10 @@ module.exports = React.createClass({
       audio.play();
     }
 
+    // player-animated
+
     return (
-      <div id="podcast-player" className="bottom-container animated player-animation">
+      <div id="podcast-player" className="bottom-container">
         <div className="player-container">
           <audio id="music" preload="true">
             <source id="mp3Source"/>

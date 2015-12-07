@@ -106,7 +106,7 @@ var podcastPlayerVisible = false;
 
 function show() {
 	console.log("show");
-	if(podcastPlayerVisible){
+	/*if(podcastPlayerVisible){
 		return;
 	}
 	podcastPlayerVisible = true;
@@ -115,10 +115,12 @@ function show() {
 	element.className = element.className.replace(/\bhide\b/,'');
 	element.className = element.className.replace(/\bslideOutDown\b/,'');
 	element.className = element.className + " slideInUp show";
+	*/
 }
 
 function hide() {
 	console.log("hide");
+	/*
 	if(!podcastPlayerVisible){
 		return;
 	}
@@ -128,6 +130,7 @@ function hide() {
 	element.className = element.className.replace(/\bslideInUp\b/,'');
 	element.className = element.className.replace(/\bshow\b/,'');
 	element.className = element.className + " slideOutDown";
+	*/
 }
 
-podcastPlayer.className = podcastPlayer.className + " hide";
+//podcastPlayer.className = podcastPlayer.className + " hide";
