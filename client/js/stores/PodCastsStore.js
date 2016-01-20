@@ -36,6 +36,9 @@ var PodCastsStore = _.extend({}, EventEmitter.prototype, {
   getPlaying: function() {
     return _playing;
   },
+  setPlayStatus: function(value) {
+    _playing = false;
+  },
 
   getCurrentUrl: function() {
     return _baseUrl + _podCastUrl;

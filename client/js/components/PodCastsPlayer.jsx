@@ -37,22 +37,25 @@ module.exports = React.createClass({
 
   play: function() {
     console.log("PLAY!");
+    PodCastsStore.setPlayStatus(false);
+    this.setState(getPodCastPlayerState());
   },
 
   render: function() {
 
     console.log("PodCastsPlayer");
     console.log(this.state.currentPodCastUrl);
-   
+    var audioSrc = null;
+
+    
     if(this.state.currentPodCastUrl && this.state.play){
       var audio = document.getElementById('music');
-
-      var source = document.getElementById('mp3Source');
-      source.src= this.state.currentPodCastUrl;
+      audioSrc = this.state.currentPodCastUrl;
 
       audio.load();
       audio.play();
     }
+    
 
     // player-animated
 
@@ -60,11 +63,10 @@ module.exports = React.createClass({
       <div id="podcast-player" className="bottom-container">
         <div className="player-container">
           <audio id="music" preload="true">
-            <source id="mp3Source"/>
-            <source id="oggSource"/>
+            <source src={audioSrc} />
           </audio>
           <div id="audioplayer">
-            <button id="pButton" onClick={this.play} className="play"></button>
+            <button id="pButton" onClick={this.play} className={this.state.play ? 'pause' : 'play'}></button>
             <div id="timeline">
               <div id="playhead"></div>
             </div>

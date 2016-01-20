@@ -314,22 +314,25 @@ module.exports = React.createClass({displayName: "exports",
 
   play: function() {
     console.log("PLAY!");
+    PodCastsStore.setPlayStatus(false);
+    this.setState(getPodCastPlayerState());
   },
 
   render: function() {
 
     console.log("PodCastsPlayer");
     console.log(this.state.currentPodCastUrl);
-   
+    var audioSrc = null;
+
+    
     if(this.state.currentPodCastUrl && this.state.play){
       var audio = document.getElementById('music');
-
-      var source = document.getElementById('mp3Source');
-      source.src= this.state.currentPodCastUrl;
+      audioSrc = this.state.currentPodCastUrl;
 
       audio.load();
       audio.play();
     }
+    
 
     // player-animated
 
@@ -337,11 +340,10 @@ module.exports = React.createClass({displayName: "exports",
       React.createElement("div", {id: "podcast-player", className: "bottom-container"}, 
         React.createElement("div", {className: "player-container"}, 
           React.createElement("audio", {id: "music", preload: "true"}, 
-            React.createElement("source", {id: "mp3Source"}), 
-            React.createElement("source", {id: "oggSource"})
+            React.createElement("source", {src: audioSrc})
           ), 
           React.createElement("div", {id: "audioplayer"}, 
-            React.createElement("button", {id: "pButton", onClick: this.play, className: "play"}), 
+            React.createElement("button", {id: "pButton", onClick: this.play, className: this.state.play ? 'pause' : 'play'}), 
             React.createElement("div", {id: "timeline"}, 
               React.createElement("div", {id: "playhead"})
             )
@@ -439,6 +441,9 @@ var PodCastsStore = _.extend({}, EventEmitter.prototype, {
 
   getPlaying: function() {
     return _playing;
+  },
+  setPlayStatus: function(value) {
+    _playing = false;
   },
 
   getCurrentUrl: function() {
