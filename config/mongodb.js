@@ -1,9 +1,9 @@
 var config = {
-  username: 'admin',
-  password: 'NM1HXFWmREdf',
-  host: '127.0.0.1',
-  port: '27017',
-  database: 'radio',
+  username: 'rrpodcast',
+  password: 'rrpodcast',
+  host: 'ds051873.mongolab.com',
+  port: '51873',
+  database: 'rrpodcast',
   options: { server: { socketOptions: { keepAlive: 1 } } } // see http://mongoosejs.com/docs/connections.html
 };
 
