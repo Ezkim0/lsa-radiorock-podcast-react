@@ -3,30 +3,31 @@ var EventEmitter = require('events').EventEmitter;
 var PodCastsConstants = require('../constants/PodCastsConstants');
 var _ = require('underscore');
 
-// Define initial data points
-var _currentPage = 0;
-var _podcasts = [];
+var _playing = false;
+var _podCastUrl;
+var _baseUrl = "http://d3ac2fc8l4ni8x.cloudfront.net/";
 
 // Method to load product data from mock API
 function loadProject(data) {
   _text = data;
 }
 
-
 // Extend ProjectStore with EventEmitter to add eventing capabilities
-var PodCastsStore = _.extend({}, EventEmitter.prototype, {
+var PodCastsPlayerStore = _.extend({}, EventEmitter.prototype, {
 
-  getCurrentPage: function() {
-    return _currentPage;
+  getPlaying: function() {
+    return _playing;
+  },
+  setPlayStatus: function(value) {
+    _playing = value;
   },
 
-  getNextPage: function() {
-    _currentPage++;
-    return _currentPage;
-  },
-
-  getPodCasts: function() {
-    return _podcasts;
+  getCurrentUrl: function() {
+    var returnValue;
+    if(_podCastUrl){
+      returnValue = _baseUrl + _podCastUrl;
+    }
+    return returnValue;
   },
 
   // Emit Change event
@@ -49,23 +50,25 @@ var PodCastsStore = _.extend({}, EventEmitter.prototype, {
 // Register callback with AppDispatcher
 AppDispatcher.register(function(action) {
   
-  console.log("PodCastsStore " , action);
+  console.log("PodCastsPlayerStore " , action);
 
   switch(action.actionType) {
-
-    case PodCastsConstants.PODCASTS_LOADED:
-      _podcasts = _podcasts.concat(action.podcasts);
-      break;    
-
+    
+    case PodCastsConstants.SET_PODCAST:
+      console.log(".......... " + action.podCastFilename);
+      _podCastUrl = action.podCastFilename;
+      _playing = true;
+      break;
+      
     default:
       return true;
   }
 
   // If action was responded to, emit change event
-  PodCastsStore.emitChange();
+  PodCastsPlayerStore.emitChange();
 
   return true;
 
 });
 
-module.exports = PodCastsStore;
+module.exports = PodCastsPlayerStore;

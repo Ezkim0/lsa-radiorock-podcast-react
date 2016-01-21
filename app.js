@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var env = process.env.NODE_ENV || 'development';
-env = "release";
+//env = "release";
 var config = require('./config/config')[env];
 
 console.log(env);

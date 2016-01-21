@@ -1,13 +1,14 @@
 /** @jsx React.DOM */
 
 var React = require('react');
-var PodCastsStore = require('../stores/PodCastsStore');
+var PodCastsPlayerStore = require('../stores/PodCastsPlayerStore');
 var PodCastsPlayerActions = require('../actions/PodCastsPlayerActions');
+var audio;
 
 function getPodCastPlayerState() {
   return {
-    currentPodCastUrl: PodCastsStore.getCurrentUrl(),
-    play: PodCastsStore.getPlaying()
+    currentPodCastUrl: PodCastsPlayerStore.getCurrentUrl(),
+    play: PodCastsPlayerStore.getPlaying()
   };
 }
 
@@ -27,43 +28,45 @@ module.exports = React.createClass({
 
   // Add change listeners to stores
   componentDidMount: function() {
-    PodCastsStore.addChangeListener(this._onChange);
+    PodCastsPlayerStore.addChangeListener(this._onChange);
+    audio = document.getElementById('music');
+    audio.addEventListener('canplaythrough', this.soundLoaded, false);
   },
 
   // Remove change listers from stores
   componentWillUnmount: function() {
-    PodCastsStore.removeChangeListener(this._onChange);
+    PodCastsPlayerStore.removeChangeListener(this._onChange);
   },
 
   play: function() {
-    console.log("PLAY!");
-    PodCastsStore.setPlayStatus(false);
+    console.log("PLAYING status: " + PodCastsPlayerStore.getPlaying());
+    PodCastsPlayerStore.setPlayStatus(!PodCastsPlayerStore.getPlaying());
     this.setState(getPodCastPlayerState());
   },
 
+  soundLoaded: function() {
+    console.log("canplay");
+    audio.play();
+  },
+
   render: function() {
+    console.log("PodCastsPlayer: " + this.state.currentPodCastUrl);
+    var audioSrc;
 
-    console.log("PodCastsPlayer");
-    console.log(this.state.currentPodCastUrl);
-    var audioSrc = null;
-
-    
     if(this.state.currentPodCastUrl && this.state.play){
-      var audio = document.getElementById('music');
-      audioSrc = this.state.currentPodCastUrl;
+      var audioSrc = this.state.currentPodCastUrl;
 
       audio.load();
-      audio.play();
+      //audio.play();
+    } else if (this.state.currentPodCastUrl && !this.state.play) {
+      document.getElementById('music').pause();
     }
     
-
-    // player-animated
-
     return (
       <div id="podcast-player" className="bottom-container">
         <div className="player-container">
           <audio id="music" preload="true">
-            <source src={audioSrc} />
+            <source src={this.state.currentPodCastUrl} />
           </audio>
           <div id="audioplayer">
             <button id="pButton" onClick={this.play} className={this.state.play ? 'pause' : 'play'}></button>
@@ -77,9 +80,8 @@ module.exports = React.createClass({
   },
 
   _onChange: function() {
-    console.log(".......");
+    console.log("....... _onChange PodCastsPlayer");
     this.setState(getPodCastPlayerState());
   }
-
   
 });
