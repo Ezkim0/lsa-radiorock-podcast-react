@@ -8,8 +8,6 @@ var mongoose = require('mongoose');
 var fs = require('fs');
 var app = express();
 
-
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -23,10 +21,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var env = process.env.NODE_ENV || 'development';
-//env = "release";
+env = "release";
 var config = require('./config/config')[env];
-
-console.log(env);
+console.log("Environment: " + env);
 
 // Bootstrap models
 var models_path = __dirname + '/models';

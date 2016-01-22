@@ -22,20 +22,33 @@ module.exports = React.createClass({
     // Set initial application state using props
     return {
       currentPodCastUrl: null,
-      play: false
+      play: false,
+      el: null
     };
   },
 
   // Add change listeners to stores
   componentDidMount: function() {
     PodCastsPlayerStore.addChangeListener(this._onChange);
-    audio = document.getElementById('music');
+    //audio = document.getElementById('music');
+    
+    console.log("--- " , React.findDOMNode(this.refs.audio_tag));
+
+    audio = React.findDOMNode(this.refs.audio_tag);
     audio.addEventListener('canplaythrough', this.soundLoaded, false);
+
+    console.log("--- " , this.audio);
   },
 
   // Remove change listers from stores
   componentWillUnmount: function() {
     PodCastsPlayerStore.removeChangeListener(this._onChange);
+  },
+
+  componentDidUpdate: function() {
+    console.log("componentDidUpdate");
+    audio.load();
+    audio.play();
   },
 
   play: function() {
@@ -53,19 +66,20 @@ module.exports = React.createClass({
     console.log("PodCastsPlayer: " + this.state.currentPodCastUrl);
     var audioSrc;
 
-    if(this.state.currentPodCastUrl && this.state.play){
-      var audioSrc = this.state.currentPodCastUrl;
+    console.log("render " , this.props);
 
-      audio.load();
-      //audio.play();
+    if(this.state.currentPodCastUrl && this.state.play){
+      //audioSrc = this.state.currentPodCastUrl;
+      
+      console.log("--- " , this.props);
     } else if (this.state.currentPodCastUrl && !this.state.play) {
-      document.getElementById('music').pause();
+      //document.getElementById('music').pause();
     }
     
     return (
       <div id="podcast-player" className="bottom-container">
         <div className="player-container">
-          <audio id="music" preload="true">
+          <audio ref="audio_tag" id="music" preload="auto" >
             <source src={this.state.currentPodCastUrl} />
           </audio>
           <div id="audioplayer">
