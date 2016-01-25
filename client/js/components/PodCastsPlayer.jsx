@@ -8,7 +8,8 @@ var audio;
 function getPodCastPlayerState() {
   return {
     currentPodCastUrl: PodCastsPlayerStore.getCurrentUrl(),
-    play: PodCastsPlayerStore.getPlaying()
+    paused: PodCastsPlayerStore.getPaused(),
+    loaded: PodCastsPlayerStore.getLoaded(),
   };
 }
 
@@ -22,22 +23,23 @@ module.exports = React.createClass({
     // Set initial application state using props
     return {
       currentPodCastUrl: null,
-      play: false,
-      el: null
+      paused: false,
+      loaded: false
     };
   },
 
   // Add change listeners to stores
   componentDidMount: function() {
     PodCastsPlayerStore.addChangeListener(this._onChange);
-    //audio = document.getElementById('music');
-    
-    console.log("--- " , React.findDOMNode(this.refs.audio_tag));
-
     audio = React.findDOMNode(this.refs.audio_tag);
-    audio.addEventListener('canplaythrough', this.soundLoaded, false);
+    audio.addEventListener('canplay', this.soundLoaded, false);
+  },
 
-    console.log("--- " , this.audio);
+  soundLoaded: function () {
+    if (this.state.currentPodCastUrl && this.state.paused && !this.state.loaded ) {
+      audio.play();
+      PodCastsPlayerStore.setLoadedStatus(true);
+    }
   },
 
   // Remove change listers from stores
@@ -46,44 +48,47 @@ module.exports = React.createClass({
   },
 
   componentDidUpdate: function() {
-    console.log("componentDidUpdate");
-    audio.load();
-    audio.play();
+    console.log("componentDidUpdate " + this.state.loaded);
+    console.log("componentDidUpdate " + this.state.currentPodCastUrl);
+    //audio.load();
+    //audio.play();
+
+    if(this.state.currentPodCastUrl && !this.state.loaded) {
+      console.log("TÄNNE! -1");
+      audio.load();
+      return;
+    }
+
+    if (this.state.currentPodCastUrl && !this.state.paused ) {
+      console.log("TÄNNE! -2 ");
+      audio.pause();
+    }
+
+    if (this.state.currentPodCastUrl && this.state.paused ) {
+      console.log("TÄNNE! -3 ");
+      audio.play();
+    }
+
   },
 
   play: function() {
-    console.log("PLAYING status: " + PodCastsPlayerStore.getPlaying());
-    PodCastsPlayerStore.setPlayStatus(!PodCastsPlayerStore.getPlaying());
+    console.log("PLAYING status: " + PodCastsPlayerStore.getPaused());
+    PodCastsPlayerStore.setPauseStatus(!PodCastsPlayerStore.getPaused());
     this.setState(getPodCastPlayerState());
   },
 
-  soundLoaded: function() {
-    console.log("canplay");
-    audio.play();
-  },
-
   render: function() {
-    console.log("PodCastsPlayer: " + this.state.currentPodCastUrl);
+    console.log("PodCastsPlayer: " + this.state.paused);
     var audioSrc;
 
-    console.log("render " , this.props);
-
-    if(this.state.currentPodCastUrl && this.state.play){
-      //audioSrc = this.state.currentPodCastUrl;
-      
-      console.log("--- " , this.props);
-    } else if (this.state.currentPodCastUrl && !this.state.play) {
-      //document.getElementById('music').pause();
-    }
-    
     return (
       <div id="podcast-player" className="bottom-container">
         <div className="player-container">
-          <audio ref="audio_tag" id="music" preload="auto" >
+          <audio ref="audio_tag" id="music" preload="auto" >§
             <source src={this.state.currentPodCastUrl} />
           </audio>
           <div id="audioplayer">
-            <button id="pButton" onClick={this.play} className={this.state.play ? 'pause' : 'play'}></button>
+            <button id="pButton" onClick={this.play} className={this.state.paused ? 'pause' : 'play'}></button>
             <div id="timeline">
               <div id="playhead"></div>
             </div>
