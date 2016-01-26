@@ -3,7 +3,8 @@ var EventEmitter = require('events').EventEmitter;
 var PodCastsConstants = require('../constants/PodCastsConstants');
 var _ = require('underscore');
 
-var _playing = false;
+var _paused = false;
+var _loaded = false;
 var _podCastUrl;
 var _baseUrl = "http://d3ac2fc8l4ni8x.cloudfront.net/";
 
@@ -15,11 +16,20 @@ function loadProject(data) {
 // Extend ProjectStore with EventEmitter to add eventing capabilities
 var PodCastsPlayerStore = _.extend({}, EventEmitter.prototype, {
 
-  getPlaying: function() {
-    return _playing;
+  getPaused: function() {
+    return _paused;
   },
-  setPlayStatus: function(value) {
-    _playing = value;
+  setPauseStatus: function(value) {
+    _paused = value;
+  },
+
+  getLoaded: function() {
+    return _loaded;
+  },
+
+
+  setLoadedStatus: function(value) {
+    _loaded = value;
   },
 
   getCurrentUrl: function() {
@@ -57,7 +67,8 @@ AppDispatcher.register(function(action) {
     case PodCastsConstants.SET_PODCAST:
       console.log(".......... " + action.podCastFilename);
       _podCastUrl = action.podCastFilename;
-      _playing = true;
+      _paused = true;
+      _loaded = false;
       break;
       
     default:
