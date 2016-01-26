@@ -57,8 +57,6 @@ mongoose.connection.on('disconnected', function () {
 
 
 
-
-
 var index = require('./routes/index');
 var api = require('./routes/api');
 app.use('/api', api);
