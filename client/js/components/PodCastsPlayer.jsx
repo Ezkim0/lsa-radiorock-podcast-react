@@ -65,7 +65,7 @@ module.exports = React.createClass({
 
   render: function() {
     var audioSrc;
-    var playerClass;
+    var playerClass = "bottom-container hidden";
 
     if(this.state.currentPodCastUrl){
       playerClass = "bottom-container animated fadeInUp";

@@ -73,8 +73,16 @@ function moveplayhead(e) {
 // timeUpdate 
 // Synchronizes playhead position with current point in audio 
 function timeUpdate() {
+	
+	timelineWidth = timeline.offsetWidth - playhead.offsetWidth;
+
 	var playPercent = timelineWidth * (music.currentTime / duration);
 	playhead.style.marginLeft = playPercent + "px";
+	
+	console.log("tänne " + timelineWidth);
+	console.log("tänne " + music.currentTime);
+	console.log("tänne " + music.currentTime);
+
 	if (music.currentTime == duration) {
 		pButton.className = "";
 		pButton.className = "play";

@@ -56,11 +56,13 @@ module.exports = React.createClass({
 
       if(this.state.selected) {
         if (!this.state.loaded) {
-          btn = <span>Loading...</span>
+          btn = <span className="glyphicon glyphicon-option-horizonta" />
         } else {
           if (this.state.paused) {
+            //btn = <span className="glyphicon glyphicon-pause" />
             btn = <span>Playing...</span>
           } else {
+            //btn = <span className="glyphicon glyphicon-play" />
             btn = <span>Paused...</span>
           }
         }

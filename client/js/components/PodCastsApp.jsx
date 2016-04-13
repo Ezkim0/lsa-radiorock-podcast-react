@@ -22,6 +22,10 @@ module.exports = React.createClass({
   getInitialState: function(props) {
     props = props || this.props;
 
+    if(props.items) {
+      PodCastsStore.setDefaultPodcasts(props.items);
+    }
+
     return{
       items: props.items,
       page: 0,
@@ -49,9 +53,6 @@ module.exports = React.createClass({
     var totalScrolled = scrollT+inHeight;
 
     if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-       console.log("near bottom!");
-       console.log("Load new data!");
-       console.log("page: " + this.state.page);
        this.state.page++;
 
         if(!this.state.loadingFlag){ 

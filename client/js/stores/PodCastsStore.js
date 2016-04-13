@@ -26,6 +26,10 @@ var PodCastsStore = _.extend({}, EventEmitter.prototype, {
     return _podcasts;
   },
 
+  setDefaultPodcasts: function(data) {
+    _podcasts = data;
+  },
+
   // Emit Change event
   emitChange: function() {
     this.emit('change');
@@ -46,10 +50,11 @@ AppDispatcher.register(function(action) {
   switch(action.actionType) {
 
     case PodCastsConstants.PODCASTS_LOADED:
-      console.log("......>>>>> " + _podcasts);
       if(action.podcasts) {
         if(action.podcasts.length > 0) {
           _podcasts = _podcasts.concat(action.podcasts);
+        } else {
+          _currentPage--;
         }
       }
       
