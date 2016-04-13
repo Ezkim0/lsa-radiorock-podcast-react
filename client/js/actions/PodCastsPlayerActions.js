@@ -6,7 +6,6 @@ var rest = require('rest');
 var mime = require('rest/interceptor/mime');
 var client = rest.wrap(mime);
 
-// Define actions object
 var PodCastsPlayerActions = {
 
   // Load new page
@@ -24,33 +23,46 @@ var PodCastsPlayerActions = {
     })
   },
 
-
+  // Load podcasts by page
   loadPodCasts: function(page) {
-    console.log("loadPodCasts " + page);
-
-    //var page = PodCastsStore.getCurrentPage();
-    //console.log("testText " + page);
-
     client({
       path: 'api/podcasts/all?page=' + page
     }).then(function(response) {
+      
+      console.log(response.entity);
+
       AppDispatcher.dispatch({
         actionType: PodCastsConstants.PODCASTS_LOADED,
         podcasts: response.entity
       });
     });
-
   },
 
-  setPodCastFilename: function(filename) {
+  // Set podcastfile to podcastplayer
+  setPodCastFilename: function(item, filename) {
     AppDispatcher.dispatch({
       actionType: PodCastsConstants.SET_PODCAST,
-      podCastFilename: filename
+      podCastFilename: filename,
+      item: item
     });
-
   },
 
+  // Set status of pause
+  setPauseStatus: function(status) {
+    AppDispatcher.dispatch({
+      actionType: PodCastsConstants.SET_PAUSE_STATUS,
+      status: status
+    });
+  },
 
+  // Set status of loaded
+  // Loaded is true when podcast player have loaded podcast and start playing it
+  setLoadedStatus: function(status) {
+    AppDispatcher.dispatch({
+      actionType: PodCastsConstants.SET_LOADED_STATUS,
+      status: status
+    });
+  },
 
 };
 

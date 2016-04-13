@@ -6,6 +6,7 @@ var _ = require('underscore');
 var _paused = false;
 var _loaded = false;
 var _podCastUrl;
+var _item;
 var _baseUrl = "http://d3ac2fc8l4ni8x.cloudfront.net/";
 
 // Method to load product data from mock API
@@ -16,21 +17,44 @@ function loadProject(data) {
 // Extend ProjectStore with EventEmitter to add eventing capabilities
 var PodCastsPlayerStore = _.extend({}, EventEmitter.prototype, {
 
-  getPaused: function() {
+  getPaused: function(id) {
+    if(id && _item) {
+      if(id === _item._id) {
+        return _paused;
+      } else {
+        return true;
+      }
+    }
+
     return _paused;
   },
-  setPauseStatus: function(value) {
-    _paused = value;
-  },
 
-  getLoaded: function() {
+  getLoaded: function(id) {
+    if(id && _item) {
+      if(id === _item._id) {
+        return _loaded;
+      } else {
+        return false;
+      }
+    }
+
     return _loaded;
   },
 
-
-  setLoadedStatus: function(value) {
-    _loaded = value;
+  getItem: function() {
+    return _item;
   },
+
+  selected: function(id) {
+    if(id && _item) {
+      if(id === _item._id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+
 
   getCurrentUrl: function() {
     var returnValue;
@@ -65,10 +89,19 @@ AppDispatcher.register(function(action) {
   switch(action.actionType) {
     
     case PodCastsConstants.SET_PODCAST:
-      console.log(".......... " + action.podCastFilename);
+      //console.log(".......... " + action.podCastFilename);
       _podCastUrl = action.podCastFilename;
+      _item = action.item;
       _paused = true;
       _loaded = false;
+      break;
+
+    case PodCastsConstants.SET_PAUSE_STATUS:
+      _paused = action.status;
+      break;
+    
+    case PodCastsConstants.SET_LOADED_STATUS:
+      _loaded = action.status;
       break;
       
     default:

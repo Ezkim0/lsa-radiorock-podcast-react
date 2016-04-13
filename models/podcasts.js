@@ -1,9 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var test = require('mongoose-paginate');
-//var mongooseUtil = require('../utils/mongoose-util');
-//var async = require('async');
-
 
 // RSS JSON
 /*

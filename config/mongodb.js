@@ -4,7 +4,7 @@ var config = {
   host: 'ds051873.mongolab.com',
   port: '51873',
   database: 'rrpodcast',
-  options: { server: { socketOptions: { keepAlive: 1 } } } // see http://mongoosejs.com/docs/connections.html
+  options: { server: { socketOptions: { keepAlive: 1 } } }
 };
 
 config.uri = 'mongodb://' + config.username + ':' + config.password + '@' + config.host + ':' + config.port + '/' + config.database;

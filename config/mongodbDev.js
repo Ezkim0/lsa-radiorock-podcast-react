@@ -4,7 +4,7 @@ var config = {
   host: '127.0.0.1',
   port: '27017',
   database: 'rrpodcasts',
-  options: { server: { socketOptions: { keepAlive: 1 } } } // see http://mongoosejs.com/docs/connections.html
+  options: { server: { socketOptions: { keepAlive: 1 } } } 
 };
 
 config.uri = 'mongodb://' + config.username + ':' + config.password + '@' + config.host + ':' + config.port + '/' + config.database;

@@ -60,6 +60,9 @@ a {
   margin: 15px 0;
   overflow: hidden;
   height: 200px;
+
+  -webkit-animation-duration: .75s; 
+  animation-duration: .75s;
 }
 
 .shape {
@@ -174,6 +177,8 @@ a {
   position: fixed;
   bottom: 0;
   width: 100%;
+  -webkit-animation-duration: .25s; 
+  animation-duration: .25s;
 }
 
 .player-container {
