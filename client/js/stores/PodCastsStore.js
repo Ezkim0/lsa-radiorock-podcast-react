@@ -58,8 +58,8 @@ AppDispatcher.register(function(action) {
         }
       }
       
-      break;    
-
+      break;
+      
     default:
       return true;
   }
